@@ -6,7 +6,8 @@
       align="center"
     >
       <v-col
-        cols='4'
+       cols="10"
+       sm="6"
       >
         <form
           @submit.prevent="submit"
@@ -19,11 +20,25 @@
             @blur="$v.name.$touch()"
           ></v-text-field>
           <v-text-field
+            label="Фамилия"
+            v-model="surename"
+            :error-messages="surenameErrors"
+            required
+            @blur="$v.surename.$touch()"
+          ></v-text-field>
+          <v-text-field
             v-model="email"
             :error-messages="emailErrors"
             label="E-mail"
             required
             @blur="$v.email.$touch()"
+          ></v-text-field>
+          <v-text-field
+            label="Профиль в vk"
+            v-model="vkProfile"
+            :error-messages="vkProfileErrors"
+            required
+            @blur="$v.vkProfile.$touch()"
           ></v-text-field>
           <v-text-field
             label="Пароль"
@@ -54,7 +69,6 @@
           >
             Войти
           </v-btn>
-          <nuxt-link to="/registration" class="mt-5 d-inline-block">Зарегистрироваться</nuxt-link>
         </form>
       </v-col>
     </v-row>
@@ -69,9 +83,10 @@
   export default {
     layout: 'autorization',
     data: () => ({
-      source: '',
       name: '',
+      surename: '',
       email: '',
+      vkProfile: '',
       password: '',
       confirm: ''
     }),
@@ -81,8 +96,10 @@
     },
     validations: {
       name: { required, maxLength: maxLength(10) },
+      surename: { required, maxLength: maxLength(20) },
+      vkProfile: { required, maxLength: maxLength(30) },
       email: { required, email },
-      password: { required, minLength:  minLength(3) },
+      password: { required, minLength:  minLength(6) },
       confirm: { sameAs: sameAs('password') }
     },
     computed: {
@@ -93,11 +110,18 @@
         !this.$v.name.required && errors.push('Имя не должно быть пустым')
         return errors
       },
-      passwordErrors () {
+      surenameErrors () {
         const errors = []
-        if (!this.$v.password.$dirty) return errors
-        !this.$v.password.required && errors.push('Пароль не может быть пустым')
-        !this.$v.password.minLength && errors.push('Длина пароля не менее 3 символов')
+        if (!this.$v.surename.$dirty) return errors
+        !this.$v.surename.maxLength && errors.push('Длина имени не более 20 символов')
+        !this.$v.surename.required && errors.push('Имя не должно быть пустым')
+        return errors
+      },
+      vkProfileErrors () {
+        const errors = []
+        if (!this.$v.vkProfile.$dirty) return errors
+        !this.$v.vkProfile.maxLength && errors.push('Длина имени не более 30 символов')
+        !this.$v.vkProfile.required && errors.push('Имя не должно быть пустым')
         return errors
       },
       emailErrors () {
@@ -105,6 +129,13 @@
         if (!this.$v.email.$dirty) return errors
         !this.$v.email.email && errors.push('Введите верный email')
         !this.$v.email.required && errors.push('Заполните E-mail')
+        return errors
+      },
+       passwordErrors () {
+        const errors = []
+        if (!this.$v.password.$dirty) return errors
+        !this.$v.password.required && errors.push('Пароль не может быть пустым')
+        !this.$v.password.minLength && errors.push('Длина пароля не менее 6 символов')
         return errors
       },
       confirmErrors () {
